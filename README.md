@@ -1,5 +1,5 @@
 # lciclcAzz LINEbot-on-heroku
-lciclcAzz Corporation Line Bot Message
+lciclcAzz Corporation Line Bot Message.
 
 ## Contribution
 1. Fork it  
