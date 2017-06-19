@@ -1,0 +1,7 @@
+### eclipce ###
+.settings/*
+.classpath
+.project
+
+### Maven ###
+target/*
