@@ -88,18 +88,18 @@ public class CallBack extends HttpServlet {
 		}
 
 		String replyMess;
-		if ("message".equals(events.path(0).path("type").asText())) {  // メッセージを受けたとき
+		if ("message".equals(events.path(0).path("type").asText())) {  // received message
 			replyMess = createReply(events.path(0).path("message"));
 
-		} else if ("join".equals(events.path(0).path("type").asText())){  // トークの参加を受けたとき
-			replyMess = "\"messages\":[{\"type\":\"text\", \"text\":\"睦月、砲雷撃戦始めるよ♪\"}]";
+		} else if ("join".equals(events.path(0).path("type").asText())){  // join message
+			replyMess = "\"messages\":[{\"type\":\"text\", \"text\":\"Start..\"}]";
 
 		} else {
 			res.setStatus(HttpServletResponse.SC_OK);
 			return;
 		}
 
-		// 返信する //
+		// Analyse message //
 		HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/reply");
 		httpPost.setHeader("Content-Type", "application/json");
 		httpPost.setHeader("Authorization", "Bearer " + TOKEN);
