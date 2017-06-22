@@ -64,6 +64,8 @@ public class CallBack extends HttpServlet {
 				out.write(i);
 			}
 
+			
+
 			Mac mac = Mac.getInstance("HmacSHA256");
 			mac.init(new SecretKeySpec(SECRET_KEY.getBytes(), "HmacSHA256"));
 			String csig = Base64.getEncoder().encodeToString(mac.doFinal(reqAll));
