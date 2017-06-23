@@ -57,8 +57,8 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>mutuki</finalName>
+		<finalName>lcalinebot</finalName>
 	</build>
-	<groupId>ahuglajbclajep.linebot</groupId>
-	<artifactId>mutukibot</artifactId>
+	<groupId>com.lciclcazz.linebot</groupId>
+	<artifactId>lciclcazz-linebot</artifactId>
 </project>
