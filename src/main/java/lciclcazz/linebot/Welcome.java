@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 
 @WebServlet("/")
 public class Welcome extends HttpServlet{
-
+    private static final String APP_NAME = System.getenv("APP_NAME");
         @Override
         public void doGet(HttpServletRequest req, HttpServletResponse res) {
 
@@ -20,6 +20,7 @@ public class Welcome extends HttpServlet{
             try {
                 out = res.getWriter();
                 out.print("lciclcAzz's Line Bot Messages.");
+                out.println("APP_NAME : "+APP_NAME);
                 out.close();
             }catch (Exception e){
                 e.printStackTrace();
