@@ -2,11 +2,7 @@ package lciclcazz.linebot;
 
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -46,6 +42,20 @@ public class CallBack extends HttpServlet {
 	private static final String APP_NAME = System.getenv("APP_NAME");
 	private static final String SECRET_KEY = System.getenv("LINE_BOT_CHANNEL_SECRET");
 	private static final String TOKEN = System.getenv("LINE_BOT_CHANNEL_TOKEN");
+
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse res) {
+
+		PrintWriter out;
+		try {
+			out = res.getWriter();
+			out.print("lciclcAzz's Line Bot Messages.");
+			out.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		res.setStatus(HttpServletResponse.SC_OK);
+	}
 
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) {
@@ -216,4 +226,5 @@ public class CallBack extends HttpServlet {
 
 		return fileName.toString();
 	}
+
 }
