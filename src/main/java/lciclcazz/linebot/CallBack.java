@@ -7,6 +7,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Timestamp;
+import java.sql.Time;
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -61,7 +63,7 @@ public class CallBack extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse res) {
 
         System.out.println("From : "+req.getRemoteAddr()+" "+req.getQueryString());
-		// 署名検証 //
+		// sign check
 		String sig = req.getHeader("X-Line-Signature");
 		byte[] reqAll;
 		try (InputStream in = req.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -87,7 +89,6 @@ public class CallBack extends HttpServlet {
 			return;
 		}
 
-		// 内容の解析 //
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode events;
 		try {
@@ -137,12 +138,12 @@ public class CallBack extends HttpServlet {
 			String[] args;
 			args = message.path("text").asText().split(" ", 2);
 
-			if ("@qr".equals(args[0])) {
+			if ("qr".equals(args[0])) {
 				replyMessages.append("{\"type\":\"text\",\"text\":\"")
-						.append("よぉーし、頑張るにゃ！")
+						.append(args[0]+"！")
 						.append("\"},");
 				try {
-					String url = createQR(args[1], message.path("id").asText());  // /tmp/hoge.jpgなど
+					String url = createQR(args[1], message.path("id").asText());  // /tmp/hoge.jpg
 					replyMessages.append("{\"type\":\"image\",\"originalContentUrl\":\"")
 							.append("https://").append(APP_NAME).append(".herokuapp.com")
 							.append(url)
@@ -152,12 +153,12 @@ public class CallBack extends HttpServlet {
 
 				} catch (ArrayIndexOutOfBoundsException | IOException | WriterException e) {
 					replyMessages.append("{\"type\":\"text\",\"text\":\"")
-							.append("およ？およよ？");
+							.append("ผิดพลาด");
 				}
 
-			} else if ("@time".equals(args[0])) {
+			} else if ("time".equals(args[0])) {
 				replyMessages.append("{\"type\":\"text\",\"text\":\"")
-						.append("えへへ、どうぞです♪")
+						.append(System.currentTimeMillis())
 						.append("\"},")
 						.append("{\"type\":\"text\",\"text\":\"");
 				try {
@@ -170,42 +171,28 @@ public class CallBack extends HttpServlet {
 							.append("https://git.io/vyqDP");
 				}
 
-			} else if ("@wol".equals(args[0])) {
+			} else if ("wow".equals(args[0])) {
 				replyMessages.append("{\"type\":\"text\",\"text\":\"")
-						.append("はい、睦月が用意するね！")
+						.append("lciclcAzz")
 						.append("\"},").append("{\"type\":\"text\",\"text\":\"")
-						.append("http://www.wolframalpha.com");
+						.append("https://lca-linebot.herokuapp.com");
 				try {
 					String url = URLEncoder.encode(args[1], "UTF-8");
 					replyMessages.append("/input/?i=").append(url);
 				} catch (ArrayIndexOutOfBoundsException | UnsupportedEncodingException e) {}
 
-			} else if("@twt".equals(args[0])) {
+			}else {
 				replyMessages.append("{\"type\":\"text\",\"text\":\"")
-						.append("はい、睦月が用意するね！")
-						.append("\"},").append("{\"type\":\"text\",\"text\":\"")
-						.append("https://twitter.com/search");
-
-				try {
-					String url = URLEncoder.encode(args[1], "UTF-8");
-					replyMessages.append("?q=").append(url);
-
-				} catch (ArrayIndexOutOfBoundsException | UnsupportedEncodingException e) {
-					replyMessages.append("-advanced");
-				}
-
-			} else {
-				replyMessages.append("{\"type\":\"text\",\"text\":\"")
-						.append("にゃしぃ");
+						.append("lciclcAzz Line Bot");
 			}
 
-		} else if ("sticker".equals(type)) {  // スタンプが送られてきたとき
+		} else if ("sticker".equals(type)) {
 			replyMessages.append("{\"type\":\"text\",\"text\":\"")
-					.append("なんですかなんですかぁー？");
+					.append("sticker");
 
-		} else if ("image".equals(type)) {  // 画像が送られてきたとき
+		} else if ("image".equals(type)) {
 			replyMessages.append("{\"type\":\"text\",\"text\":\"")
-					.append("睦月、負ける気がしないのね！");
+					.append("Linkin Park！");
 		}
 		replyMessages.append("\"}]");
 
@@ -218,11 +205,11 @@ public class CallBack extends HttpServlet {
 		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 
 		BitMatrix bitMatrix = new QRCodeWriter().encode(arg, BarcodeFormat.QR_CODE, 185, 185, hints);
-		// サイズはバージョン毎に4セル刻みで大きくなり,バージョン40で171x171, デフォルトのMARGINは上下左右4セル
+		//40 171x171
 
 		BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
 		StringBuffer fileName = new StringBuffer("/tmp/").append(id).append(".jpg");
-		ImageIO.write(image, "JPEG", new File(fileName.toString()));  // tmpフォルダ以下に出力
+		ImageIO.write(image, "JPEG", new File(fileName.toString()));
 
 		return fileName.toString();
 	}
