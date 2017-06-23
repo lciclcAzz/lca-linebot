@@ -60,7 +60,7 @@ public class CallBack extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res) {
 
-
+        System.out.println("From : "+req.getRemoteAddr()+" "+req.getQueryString());
 		// 署名検証 //
 		String sig = req.getHeader("X-Line-Signature");
 		byte[] reqAll;
