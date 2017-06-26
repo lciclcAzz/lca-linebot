@@ -11,6 +11,7 @@ import lciclcazz.linebot.utils.Constant;
 import lciclcazz.linebot.utils.Tools;
 import retrofit2.Response;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import java.io.PrintWriter;
  * Created by IciclcAzz on 2017/06/26 17:11
  * Last Update 2017/06/26 17:11 | 1.
  */
+@WebServlet("/gitlab-hook")
 public class GitlabHook extends HttpServlet {
 
     private static final String APP_NAME = System.getenv("APP_NAME");
