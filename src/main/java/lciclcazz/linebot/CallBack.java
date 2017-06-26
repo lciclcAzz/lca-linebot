@@ -1,20 +1,19 @@
 package lciclcazz.linebot;
 
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Timestamp;
-import java.sql.Time;
-import java.time.DateTimeException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.EnumMap;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import lciclcazz.linebot.utils.Constant;
+import lciclcazz.linebot.utils.Tools;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,28 +22,25 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.EnumMap;
 
 
 @WebServlet("/callback")
 public class CallBack extends HttpServlet {
-	private static final String APP_NAME = System.getenv("APP_NAME");
-	private static final String SECRET_KEY = System.getenv("LINE_BOT_CHANNEL_SECRET");
-	private static final String TOKEN = System.getenv("LINE_BOT_CHANNEL_TOKEN");
-
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) {
 
@@ -65,21 +61,12 @@ public class CallBack extends HttpServlet {
         System.out.println("From : "+req.getRemoteAddr()+" "+req.getQueryString());
 		// sign check
 		String sig = req.getHeader("X-Line-Signature");
-		byte[] reqAll;
-		try (InputStream in = req.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			while (true) {
-				int i = in.read();
-				if (i == -1) {
-					reqAll = out.toByteArray();
-					break;
-				}
-				out.write(i);
-			}
+		byte[] reqAll=null;
 
-			
-
+		try {
+			reqAll = Tools.getAllReq(req);
 			Mac mac = Mac.getInstance("HmacSHA256");
-			mac.init(new SecretKeySpec(SECRET_KEY.getBytes(), "HmacSHA256"));
+			mac.init(new SecretKeySpec(Constant.SECRET_KEY.getBytes(), "HmacSHA256"));
 			String csig = Base64.getEncoder().encodeToString(mac.doFinal(reqAll));
 
 			if (!csig.equals(sig)) throw(new IOException());
@@ -89,14 +76,7 @@ public class CallBack extends HttpServlet {
 			return;
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode events;
-		try {
-			events = mapper.readTree(reqAll).path("events");
-		} catch (IOException e) {
-			res.setStatus(HttpServletResponse.SC_OK);
-			return;
-		}
+		JsonNode events = Tools.getEvent(reqAll);
 
 		String replyMess;
 		if ("message".equals(events.path(0).path("type").asText())) {  // received message
@@ -113,7 +93,7 @@ public class CallBack extends HttpServlet {
 		// Analyse message //
 		HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/reply");
 		httpPost.setHeader("Content-Type", "application/json");
-		httpPost.setHeader("Authorization", "Bearer " + TOKEN);
+		httpPost.setHeader("Authorization", "Bearer " + Constant.TOKEN);
 
 		StringBuffer replyBody = new StringBuffer("{\"replyToken\":\"")
 				.append(events.path(0).path("replyToken").asText())
@@ -145,10 +125,10 @@ public class CallBack extends HttpServlet {
 				try {
 					String url = createQR(args[1], message.path("id").asText());  // /tmp/hoge.jpg
 					replyMessages.append("{\"type\":\"image\",\"originalContentUrl\":\"")
-							.append("https://").append(APP_NAME).append(".herokuapp.com")
+							.append("https://").append(Constant.APP_NAME).append(".herokuapp.com")
 							.append(url)
 							.append("\",\"previewImageUrl\":\"")
-							.append("https://").append(APP_NAME).append(".herokuapp.com")
+							.append("https://").append(Constant.APP_NAME).append(".herokuapp.com")
 							.append(url);
 
 				} catch (ArrayIndexOutOfBoundsException | IOException | WriterException e) {
