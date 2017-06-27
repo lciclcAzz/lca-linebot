@@ -14,6 +14,6 @@ public class Constant {
     public static final String GITLAB_HEADER="X-Gitlab-Event";
     public static final String LINE_HEADER="X-Line-Signature";
 
-    public static final String IciclcAzz ="lciclcazz";
+    public static final String IciclcAzz ="@Iciclcazz";
 
 }
