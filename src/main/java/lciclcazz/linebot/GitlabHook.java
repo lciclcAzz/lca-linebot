@@ -100,7 +100,7 @@ public class GitlabHook extends HttpServlet {
     ]
 }' https://api.line.me/v2/bot/message/push
   */
-        HttpPost httpPost = new HttpPost("POST https://api.line.me/v2/bot/message/push");
+        HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/push");
         httpPost.setHeader("Content-Type", "application/json");
         httpPost.setHeader("Authorization", "Bearer " + Constant.TOKEN);
 
