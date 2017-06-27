@@ -108,7 +108,7 @@ public class GitlabHook extends HttpServlet {
                 .append("\"messages\":[\" \""+"\"")
                 .append("{\"type\":\"text\",")
                 .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"\"")
-                .append("]")
+                .append("}]")
                 .append("}");
 
 
