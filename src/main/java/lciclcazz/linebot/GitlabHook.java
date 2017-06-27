@@ -47,48 +47,34 @@ public class GitlabHook extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res) {
         System.out.println("From : "+req.getRemoteAddr());
         String xHeader = req.getHeader(Constant.GITLAB_HEADER);
-        byte[] reqAll = null;
 
-        try (InputStream in = req.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            while (true) {
-                int i = in.read();
-                if (i == -1) {
-                    reqAll = out.toByteArray();
-                    break;
-                }
-                out.write(i);
-            }
-        } catch (IOException | NullPointerException  e) {
-            e.printStackTrace();
-        }
+        JsonNode events = Tools.getEvent(Tools.getAllReq(req));
+        ObjectMapper mapper = new ObjectMapper();
 
-        System.out.println("REQUEST : "+ reqAll.toString()+"\n"+"HEADER : "+xHeader+"\n"+req.getParameterNames());
-//        JsonNode events = Tools.getEvent(Tools.getAllReq(req));
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        Commit commit = new Commit();//mapper.convertValue(events.path("commits").asText(),Commit.class);
-//        String pushMsg = "";
-//        try {
-//            TextMessage textMessage = new TextMessage(
+        Commit commit = new Commit();//mapper.convertValue(events.path("commits").asText(),Commit.class);
+        String pushMsg = "";
+        try {
+            TextMessage textMessage = new TextMessage(
+                    events.path(0).path("user_avatar").asText()
 //                    commit.getId() +"\n"+
 //                            commit.getMessage() +"\n"+
 //                            commit.getTimestamp() +"\n"+
 //                            commit.getAuthor().getName() +"\n"+
 //                            commit.getAuthor().getEmail()
-//            );
-//            PushMessage pushMessage = new PushMessage( Constant.IciclcAzz, textMessage );
-//
-//            Response<BotApiResponse> response = LineMessagingServiceBuilder
-//                            .create(Constant.TOKEN)
-//                            .build()
-//                            .pushMessage(pushMessage)
-//                            .execute();
-//            System.out.println(response.code() + " " + response.message());
-//
-//        }catch (Exception e){
-//
-//            e.printStackTrace();
-//        }
+            );
+            PushMessage pushMessage = new PushMessage( Constant.IciclcAzz, textMessage );
+
+            Response<BotApiResponse> response = LineMessagingServiceBuilder
+                            .create(Constant.TOKEN)
+                            .build()
+                            .pushMessage(pushMessage)
+                            .execute();
+            System.out.println(response.code() + " " + response.message());
+
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
 
 
 //        HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/reply");
