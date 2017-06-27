@@ -15,6 +15,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 /**
@@ -44,8 +47,22 @@ public class GitlabHook extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res) {
         System.out.println("From : "+req.getRemoteAddr());
         String xHeader = req.getHeader(Constant.GITLAB_HEADER);
+        byte[] reqAll = null;
 
-        System.out.println("REQUEST : "+ Tools.getAllReq(req)+"\n"+"HEADER : "+xHeader);
+        try (InputStream in = req.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            while (true) {
+                int i = in.read();
+                if (i == -1) {
+                    reqAll = out.toByteArray();
+                    break;
+                }
+                out.write(i);
+            }
+        } catch (IOException | NullPointerException  e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("REQUEST : "+ reqAll.toString()+"\n"+"HEADER : "+xHeader+"\n"+req.getParameterNames());
 //        JsonNode events = Tools.getEvent(Tools.getAllReq(req));
 //        ObjectMapper mapper = new ObjectMapper();
 //
