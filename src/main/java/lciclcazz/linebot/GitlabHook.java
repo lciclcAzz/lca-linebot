@@ -45,10 +45,11 @@ public class GitlabHook extends HttpServlet {
         System.out.println("From : "+req.getRemoteAddr());
         String xHeader = req.getHeader(Constant.GITLAB_HEADER);
 
+        System.out.println("REQUEST : "+ Tools.getAllReq(req));
         JsonNode events = Tools.getEvent(Tools.getAllReq(req));
         ObjectMapper mapper = new ObjectMapper();
 
-        Commit commit = mapper.convertValue(events.path("commits").asText(),Commit.class);
+        Commit commit = new Commit();//mapper.convertValue(events.path("commits").asText(),Commit.class);
         String pushMsg = "";
         try {
             TextMessage textMessage = new TextMessage(
