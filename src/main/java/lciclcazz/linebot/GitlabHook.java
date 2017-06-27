@@ -105,7 +105,7 @@ public class GitlabHook extends HttpServlet {
         httpPost.setHeader("Authorization", "Bearer " + Constant.TOKEN);
 
         StringBuffer pushBody = new StringBuffer("{\"to\":\""+Constant.IciclcAzz+"\",")
-                .append("\"messages\":[\" \""+"\"")
+                .append("\"messages\":[")
                 .append("{\"type\":\"text\",")
                 .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"\"")
                 .append("}]")
