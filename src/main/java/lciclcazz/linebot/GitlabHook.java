@@ -111,7 +111,7 @@ public class GitlabHook extends HttpServlet {
                 .append("}]")
                 .append("}");
 
-
+        System.out.println("pushBody : "+pushBody);
         httpPost.setEntity(new StringEntity(pushBody.toString(), StandardCharsets.UTF_8));
 
         try (CloseableHttpResponse resp = HttpClients.createDefault().execute(httpPost)) {
