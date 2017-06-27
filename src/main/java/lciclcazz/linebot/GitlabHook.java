@@ -45,7 +45,7 @@ public class GitlabHook extends HttpServlet {
         System.out.println("From : "+req.getRemoteAddr());
         String xHeader = req.getHeader(Constant.GITLAB_HEADER);
 
-        System.out.println("REQUEST : "+ Tools.getAllReq(req));
+        System.out.println("REQUEST : "+ Tools.getAllReq(req)+"\n"+"HEADER : "+xHeader);
 //        JsonNode events = Tools.getEvent(Tools.getAllReq(req));
 //        ObjectMapper mapper = new ObjectMapper();
 //
