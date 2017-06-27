@@ -107,7 +107,7 @@ public class GitlabHook extends HttpServlet {
         StringBuffer pushBody = new StringBuffer("{\"to\":\""+Constant.IciclcAzz+"\",")
                 .append("\"messages\":[")
                 .append("{\"type\":\"text\",")
-                .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"\"")
+                .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"xxxx\"")
                 .append("}]")
                 .append("}");
 
