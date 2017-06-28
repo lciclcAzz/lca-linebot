@@ -76,7 +76,7 @@ public class CallBack extends HttpServlet {
 			return;
 		}
 
-		JsonNode events = Tools.getEvent(reqAll);
+		JsonNode events = Tools.getEvent(reqAll,"events");
 
 		String replyMess;
 		if ("message".equals(events.path(0).path("type").asText())) {  // received message
@@ -146,7 +146,7 @@ public class CallBack extends HttpServlet {
 					replyMessages.append(now.format(DateTimeFormatter.ofPattern("MM/dd HH:mm")));
 
 				} catch (ArrayIndexOutOfBoundsException | DateTimeException e) {
-					replyMessages.append("利用可能なタイムゾーンの一覧です！")
+					replyMessages.append("xxxx")
 							.append(System.getProperty("line.separator"))
 							.append("https://git.io/vyqDP");
 				}

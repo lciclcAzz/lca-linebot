@@ -7,6 +7,7 @@ import com.linecorp.bot.model.PushMessage;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
 import lciclcazz.linebot.model.gitlab.Commit;
+import lciclcazz.linebot.model.gitlab.PushHook;
 import lciclcazz.linebot.utils.Constant;
 import lciclcazz.linebot.utils.Tools;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -50,37 +51,38 @@ public class GitlabHook extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse res) {
-        System.out.println("From : "+req.getRemoteAddr());
+        System.out.println("From : "+req.getRemoteAddr()+" TOKEN : "+Constant.TOKEN);
         String xHeader = req.getHeader(Constant.GITLAB_HEADER);
 
-        JsonNode events = Tools.getEvent(Tools.getAllReq(req));
+        JsonNode commit = Tools.getEvent(Tools.getAllReq(req),"commits");
         ObjectMapper mapper = new ObjectMapper();
 
-        Commit commit = new Commit();//mapper.convertValue(events.path("commits").asText(),Commit.class);
+//        Commit commit = new Commit();//mapper.convertValue(events.path("commits").asText(),Commit.class);
         String pushMsg = "";
-//        try {
-//            TextMessage textMessage = new TextMessage(
-//                    events.path(0).path("user_avatar").asText()
-////                    commit.getId() +"\n"+
-////                            commit.getMessage() +"\n"+
-////                            commit.getTimestamp() +"\n"+
-////                            commit.getAuthor().getName() +"\n"+
-////                            commit.getAuthor().getEmail()
-//            );
-//            System.out.println(events.path(0).path("user_avatar").asText());
-//            PushMessage pushMessage = new PushMessage( Constant.IciclcAzz, textMessage );
-//
-//            Response<BotApiResponse> response = LineMessagingServiceBuilder
-//                            .create(Constant.TOKEN)
-//                            .build()
-//                            .pushMessage(pushMessage)
-//                            .execute();
-//            System.out.println(response.code() + " " + response.message());
-//
-//        }catch (Exception e){
-//
-//            e.printStackTrace();
-//        }
+        try {
+            TextMessage textMessage = new TextMessage(
+                    commit.path(0).path("id").asText() +"\n"+
+                            commit.path(0).path("timestamp").asText()
+//                    commit.getId() +"\n"+
+//                            commit.getMessage() +"\n"+
+//                            commit.getTimestamp() +"\n"+
+//                            commit.getAuthor().getName() +"\n"+
+//                            commit.getAuthor().getEmail()
+            );
+            System.out.println(commit.path(0).path("id").asText());
+            PushMessage pushMessage = new PushMessage( Constant.IciclcAzz, textMessage );
+
+            Response<BotApiResponse> response = LineMessagingServiceBuilder
+                            .create(Constant.TOKEN)
+                            .build()
+                            .pushMessage(pushMessage)
+                            .execute();
+            System.out.println(response.code() + " " + response.message());
+
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
 
  /*
  curl -X POST \
@@ -100,24 +102,24 @@ public class GitlabHook extends HttpServlet {
     ]
 }' https://api.line.me/v2/bot/message/push
   */
-        HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/push");
-        httpPost.setHeader("Content-Type", "application/json");
-        httpPost.setHeader("Authorization", "Bearer " + Constant.TOKEN);
-
-        StringBuffer pushBody = new StringBuffer("{\"to\":\""+Constant.IciclcAzz+"\",")
-                .append("\"messages\":[")
-                .append("{\"type\":\"text\",")
-                .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"xxxx\"")
-                .append("}]")
-                .append("}");
-
-        System.out.println("pushBody : "+pushBody);
-        httpPost.setEntity(new StringEntity(pushBody.toString(), StandardCharsets.UTF_8));
-
-        try (CloseableHttpResponse resp = HttpClients.createDefault().execute(httpPost)) {
-        } catch (IOException e) {}
-
-        res.setStatus(HttpServletResponse.SC_OK);
+//        HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/push");
+//        httpPost.setHeader("Content-Type", "application/json");
+//        httpPost.setHeader("Authorization", "Bearer " + Constant.TOKEN);
+//
+//        StringBuffer pushBody = new StringBuffer("{\"to\":\""+Constant.IciclcAzz+"\",")
+//                .append("\"messages\":[")
+//                .append("{\"type\":\"text\",")
+//                .append("\"text\":\""+events.path(0).path("user_avatar").asText()+"xxxx\"")
+//                .append("}]")
+//                .append("}");
+//
+//        System.out.println("pushBody : "+pushBody);
+//        httpPost.setEntity(new StringEntity(pushBody.toString(), StandardCharsets.UTF_8));
+//
+//        try (CloseableHttpResponse resp = HttpClients.createDefault().execute(httpPost)) {
+//        } catch (IOException e) {}
+//
+//        res.setStatus(HttpServletResponse.SC_OK);
     }
 
 }

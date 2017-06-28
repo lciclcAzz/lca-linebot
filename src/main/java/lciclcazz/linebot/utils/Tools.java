@@ -37,11 +37,11 @@ public class Tools {
 
 
  */
-    public static JsonNode getEvent(byte[] request){
+    public static JsonNode getEvent(byte[] request,String key){
         ObjectMapper mapper = new ObjectMapper();
         JsonNode events = null;
         try {
-            events = mapper.readTree(request).path("events");
+            events = mapper.readTree(request).path(key);
         } catch (IOException e) {
             e.printStackTrace();
         }
