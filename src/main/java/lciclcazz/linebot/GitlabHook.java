@@ -69,7 +69,7 @@ public class GitlabHook extends HttpServlet {
 //                            commit.getAuthor().getName() +"\n"+
 //                            commit.getAuthor().getEmail()
             );
-            System.out.println(commit.path(0).path("id").asText());
+            System.out.println("commitId : "+commit.path(0).path("id").asText());
             PushMessage pushMessage = new PushMessage( Constant.IciclcAzz, textMessage );
 
             Response<BotApiResponse> response = LineMessagingServiceBuilder
@@ -77,7 +77,12 @@ public class GitlabHook extends HttpServlet {
                             .build()
                             .pushMessage(pushMessage)
                             .execute();
-            System.out.println(response.code() + " " + response.message());
+            System.out.println(response.code() + " " + response.message()+"\n"+
+                "LineMessagingServiceBuilder : "+LineMessagingServiceBuilder
+                        .create(Constant.TOKEN)
+                        .build()
+                        .pushMessage(pushMessage).toString()
+            );
 
         }catch (Exception e){
 
