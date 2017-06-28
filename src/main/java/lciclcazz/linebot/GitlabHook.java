@@ -108,7 +108,11 @@ public class GitlabHook extends HttpServlet {
         StringBuffer pushBody = new StringBuffer("{\"to\":\""+Constant.LINE_USER_ID.get("lciclcAzz")+"\",")
                 .append("\"messages\":[")
                 .append("{\"type\":\"text\",")
-                .append("\"text\":\""+commit.path(0).path("id").asText() +" เวลา : "+ commit.path(0).path("timestamp").asText()+"\"")
+                .append("\"text\":\" Commit :"+commit.path(0).path("url").asText())
+                .append("เวลา : "+ commit.path(0).path("timestamp").asText()+
+                        "โดย : "+ commit.path(0).path("author").path("name").asText()+
+                        "[ "+commit.path(0).path("author").path("email").asText() +" ]"+
+                        "\"")
                 .append("}]")
                 .append("}");
 
