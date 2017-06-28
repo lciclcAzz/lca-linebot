@@ -1,5 +1,5 @@
 {
-  "name": "mutukibot - LINE chatbot",
+  "name": "lca-line-bot - LINE chatbot",
   "description": "This is a chatbot application",
   "env": {
     "APP_NAME": {
