@@ -77,7 +77,15 @@ public class CallBack extends HttpServlet {
 		}
 
 		JsonNode events = Tools.getEvent(reqAll,"events");
-		System.out.println("Type : "+events.path(0).path("source").path("type").asText()+"\n userId : "+events.path(0).path("source").path("userId").asText());
+		String xType = events.path(0).path("source").path("type").asText();
+		System.out.println("Type : "+xType);
+		if("group".equals(xType)) {
+			System.out.println("GROUPID : "+events.path(0).path("source").path("groupid").asText());
+		}else if("room".equals(xType)){
+			System.out.println("ROOMID : "+events.path(0).path("source").path("roomid").asText());
+		}else{
+			System.out.println("USERID : "+events.path(0).path("source").path("userid").asText());
+		}
 		String replyMess;
 		if ("message".equals(events.path(0).path("type").asText())) {  // received message
 			replyMess = createReply(events.path(0).path("message"));
