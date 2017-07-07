@@ -80,11 +80,11 @@ public class CallBack extends HttpServlet {
 		String xType = events.path(0).path("source").path("type").asText();
 		System.out.println("Type : "+xType);
 		if("group".equals(xType)) {
-			System.out.println("GROUPID : "+events.path(0).path("source").path("groupid").asText());
+			System.out.println("GROUPID : "+events.path(0).path("source").path("groupId").asText());
 		}else if("room".equals(xType)){
-			System.out.println("ROOMID : "+events.path(0).path("source").path("roomid").asText());
+			System.out.println("ROOMID : "+events.path(0).path("source").path("roomId").asText());
 		}else{
-			System.out.println("USERID : "+events.path(0).path("source").path("userid").asText());
+			System.out.println("USERID : "+events.path(0).path("source").path("userId").asText());
 		}
 		String replyMess;
 		if ("message".equals(events.path(0).path("type").asText())) {  // received message
